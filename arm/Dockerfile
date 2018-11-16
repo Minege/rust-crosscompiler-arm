@@ -24,6 +24,8 @@ COPY include/sources.list /etc/apt/
 RUN mv /tmp/.cargo $HOME && \
   dpkg --add-architecture armhf && \
   apt-key adv --recv-keys --keyserver keys.gnupg.net 9165938D90FDDD2E && \
+  #touch "/etc/apt/sources.list.d/crosstools.list" && \
+  #cat "deb http://emdebian.org/tools/debian/ jessie main" >> "/etc/apt/sources.list.d/crosstools.list" && \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
@@ -32,10 +34,25 @@ RUN mv /tmp/.cargo $HOME && \
     pkg-config \
     curl \
     libssl-dev \
+    cross-gcc-dev \
+    g++ \
+    make \
+    build-essential \
+    cmake \
+    openssl \
+    libudev-dev \
+    libudev-dev:armhf \
+    vim \
     libssl-dev:armhf && \
+  #curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add - && \
+  #DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    #crossbuild-essential-armhf \
+    #g++-arm-linux-gnueabihf \
+    #gcc-arm-linux-gnueabihf \
   curl https://sh.rustup.rs -sSf | sh /dev/stdin -y && \
   PATH=$PATH:$HOME/.cargo/bin && \
   rustup target add arm-unknown-linux-gnueabihf && \
+  rustup target add armv7-unknown-linux-gnueabihf && \
   curl -sSL https://github.com/raspberrypi/tools/archive/master.tar.gz \
   | tar -zxC /opt tools-master/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64 --strip=2 && \
   fixQualifiedLibraryPaths.sh $ROOT_FS $REAL_CC && \

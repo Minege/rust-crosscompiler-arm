@@ -1,9 +1,24 @@
 #!/bin/bash
 
+#docker run -it --rm \
+	#-v $(pwd):/source \
+	#-v ~/.cargo/git:/root/.cargo/git \
+	#-v ~/.cargo/registry:/root/.cargo/registry \
+	#-v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent \
+	#minege/rust-crosscompiler-arm:stable "$@"
+
 docker run -it --rm \
-	-v $(pwd):/source \
+      	-v $(pwd):/source \
 	-v ~/.cargo/git:/root/.cargo/git \
 	-v ~/.cargo/registry:/root/.cargo/registry \
-	dlecan/rust-crosscompiler-arm:stable "$@"
+	-v $SSH_AUTH_SOCK:/ssh-agent \
+	-e SSH_AUTH_SOCK=/ssh-agent \
+       	#-e CC=arm-linux-gnueabihf-gcc \
+	-e CXX=arm-linux-gnueabihf-gcc
+	-e CC_armv7_unknown_linux_gnueabihf=arm-linux-gnueabihf-gcc \
+	-e CC_arm_unknown_linux_gnu=arm-linux-gnueabihf-gcc-with-link-search \
+       	-e RUST_BACKTRACE=1 \
+	minege/rust-crosscompiler-arm:stable \
+	sleep 1000000000
 
 sudo chown -R `stat -c %u:%g $HOME` $(pwd) ~/.cargo
